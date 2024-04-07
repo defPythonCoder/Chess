@@ -39,7 +39,7 @@ class base():
         if self.selected and not self.move:
             if pygame.mouse.get_pressed()[0] and not (pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos())):
                 mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-                if self.rules(mousex, mousey, pieces_list):
+                if self.rules(mousex, mousey, pieces_list) and self.restrict(mousex, mousey, pieces_list):
                     self.rect.x, self.rect.y = mousex, mousey
                     self.move = True
                     self.turn = True
@@ -64,7 +64,21 @@ class rook(base):
     def restrict(self, x, y, pieces_list):
         for piece in pieces_list:
             if piece != None:
-                if y == piece.rect.y:
+                if x == piece.rect.x:
+                    if self.rect.y > piece.rect.y:
+                        if y<piece.rect.y:
+                            return False
+                    elif self.rect.y < piece.rect.y:
+                        if y>piece.rect.y:
+                            return False
+                elif y == piece.rect.y:
+                    if self.rect.x > piece.rect.x:
+                        if x<piece.rect.x:
+                            return False
+                    elif self.rect.x < piece.rect.x:
+                        if x>piece.rect.x:
+                            return False
+                '''if y == piece.rect.y:
                     if self.rect.x > piece.rect.x:
                         if x<=piece.rect.x:
                             return False
@@ -77,12 +91,11 @@ class rook(base):
                             return False
                     elif self.rect.y < piece.rect.y:
                         if y>=piece.rect.y:
-                            return False
+                            return False'''
         return True
 
     def rules(self,x,y, pieces_list):
         if (((x==self.rect.x) or (y==self.rect.y)) and not((x==self.rect.x) and (y==self.rect.y))):
-            if self.restrict(x, y, pieces_list):
                 for i in pieces_list:
                     if i != None:
                         if (i.rect.x == x) and (i.rect.y == y):
@@ -100,11 +113,12 @@ class bishop(base):
             self.white = False
 
     def restrict(self, x, y, pieces_list):
-        return True
+        for piece in pieces_list:
+            if piece != None:
+                return True
 
     def rules(self,x,y, pieces_list):
         if (self.rect.x - x)**2 == (self.rect.y - y)**2:
-            if self.restrict(x, y, pieces_list):
                 for i in pieces_list:
                     if i != None:
                         if (i.rect.x == x) and (i.rect.y == y):
