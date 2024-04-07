@@ -64,7 +64,21 @@ class rook(base):
     def restrict(self, x, y, pieces_list):
         for piece in pieces_list:
             if piece != None:
-                if y == piece.rect.y:
+                if x == piece.rect.x:
+                    if self.rect.y > piece.rect.y:
+                        if y<piece.rect.y:
+                            return False
+                    elif self.rect.y < piece.rect.y:
+                        if y>piece.rect.y:
+                            return False
+                elif y == piece.rect.y:
+                    if self.rect.x > piece.rect.x:
+                        if x<piece.rect.x:
+                            return False
+                    elif self.rect.x < piece.rect.x:
+                        if x>piece.rect.x:
+                            return False
+                '''if y == piece.rect.y:
                     if self.rect.x > piece.rect.x:
                         if x<=piece.rect.x:
                             return False
@@ -77,7 +91,7 @@ class rook(base):
                             return False
                     elif self.rect.y < piece.rect.y:
                         if y>=piece.rect.y:
-                            return False
+                            return False'''
         return True
 
     def rules(self,x,y, pieces_list):
@@ -100,7 +114,9 @@ class bishop(base):
             self.white = False
 
     def restrict(self, x, y, pieces_list):
-        return True
+        for piece in pieces_list:
+            if piece != None:
+                return True
 
     def rules(self,x,y, pieces_list):
         if (self.rect.x - x)**2 == (self.rect.y - y)**2:
