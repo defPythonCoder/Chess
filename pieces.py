@@ -82,12 +82,12 @@ class rook(base):
 
     def rules(self,x,y, pieces_list):
         if (((x==self.rect.x) or (y==self.rect.y)) and not((x==self.rect.x) and (y==self.rect.y))):
-                for i in pieces_list:
-                    if i != None:
-                        if (i.rect.x == x) and (i.rect.y == y):
-                            if i.white == self.white:
-                                return False 
-                return True
+            for i in pieces_list:
+                if i != None:
+                    if (i.rect.x == x) and (i.rect.y == y):
+                        if i.white == self.white:
+                            return False 
+            return True
         return False
 
 class bishop(base):
@@ -111,10 +111,54 @@ class bishop(base):
 
     def rules(self,x,y, pieces_list):
         if abs(self.rect.x - x) == abs(self.rect.y - y):
-                for i in pieces_list:
-                    if i != None:
-                        if (i.rect.x == x) and (i.rect.y == y):
-                            if i.white == self.white:
-                                return False 
-                return True
+            for i in pieces_list:
+                if i != None:
+                    if (i.rect.x == x) and (i.rect.y == y):
+                        if i.white == self.white:
+                            return False 
+            return True
+        return False
+    
+class knight(base):
+    def image(self):
+        if self.white:
+            self.img = pygame.transform.scale(pygame.image.load("images/w-knight.png"), (square_size, square_size))
+        else:
+            self.img = pygame.transform.scale(pygame.image.load("images/b-knight.png"), (square_size, square_size))
+            self.white = False
+
+    def restrict(self, x, y, pieces_list):
+        return True
+    
+    def rules(self, x, y, pieces_list):
+        if ((abs(self.dragx-x)<=2*square_size and abs(self.dragy-y)<=2*square_size and (abs(self.dragx-x)+abs(self.dragy-y))==3*square_size) and not((x==self.dragx) and (y==self.dragy))):
+            for i in pieces_list:
+                if i != None:
+                    if (i.rect.x == x) and (i.rect.y == y):
+                        if i.white == self.white:
+                            return False 
+            return True
+        return False
+    
+class queen(base):
+    def image(self):
+        if self.white:
+            self.img = pygame.transform.scale(pygame.image.load("images/w-queen.png"), (square_size, square_size))
+        else:
+            self.img = pygame.transform.scale(pygame.image.load("images/b-queen.png"), (square_size, square_size))
+            self.white = False
+
+    def restrict(self, x, y, pieces_list):
+        rookrestrict, bishoprestrict = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
+        return rookrestrict.restrict(x, y, pieces_list) and bishoprestrict.restrict(x, y, pieces_list)
+
+    def rules(self,x,y, pieces_list):
+        rookRules, bishoprules = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
+        if rookRules.rules(x, y, pieces_list) or bishoprules.rules(x, y, pieces_list):
+            for i in pieces_list:
+                if i != None:
+                    if (i.rect.x == x) and (i.rect.y == y):
+                        if i.white == self.white:
+                            return False 
+            return True
         return False
