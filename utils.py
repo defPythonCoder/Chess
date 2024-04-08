@@ -1,4 +1,4 @@
-square_size = 50
+from vars import *
 
 def get_coords(x,y):
     return (x // square_size) * square_size, (y // square_size) * square_size
