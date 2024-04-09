@@ -205,3 +205,40 @@ class king(base):
             return True
         return False
     
+class pawn(base):
+    def image(self):
+        if self.white:
+            self.img = pygame.transform.scale(pygame.image.load("images/w-pawn.png"), (square_size, square_size))
+        else:
+            self.img = pygame.transform.scale(pygame.image.load("images/b-pawn.png"), (square_size, square_size))
+            self.white = False
+        if self.rect.y > 4*square_size:
+            self.up = True
+        else:
+            self.up = False
+        self.firstMove = True
+
+    def restrict(self, x, y, pieces_list):
+        return True
+
+    def rules(self, x, y, pieces_list):
+        if self.up:
+            if self.rect.y > y:
+                if self.firstMove:
+                    if abs(self.rect.y - y) <= square_size*2:
+                        self.firstMove = False
+                        return True
+                else:
+                    if abs(self.rect.y - y) <= square_size:
+                        self.firstMove = False
+                        return True
+        else:
+            if self.rect.y < y:
+                if self.firstMove:
+                    if abs(self.rect.y - y) <= square_size*2:
+                        self.firstMove = False
+                        return True
+                else:
+                    if abs(self.rect.y - y) <= square_size:
+                        self.firstMove = False
+                        return True

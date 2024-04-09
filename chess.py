@@ -10,7 +10,7 @@ from pieces import *
 BLACK=(0,0,0)
 WHITE = (255,255,255)
 
-pieces = [rook(0, 7*square_size, screen, False), rook(7*square_size, 0, screen, True), rook(0, 0, screen, True), rook(7*square_size, 7*square_size, screen, False), knight(1*square_size, 0, screen, True), knight(6*square_size, 0, screen, True), knight(1*square_size, 7*square_size, screen, False),knight(6*square_size, 7*square_size, screen, False) , bishop(2*square_size, 0, screen, True), bishop(5*square_size, 0, screen, True), bishop(2*square_size,7*square_size, screen, False), bishop(5*square_size, 7*square_size, screen, False), queen(4*square_size, 0, screen, True), queen(4*square_size, 7*square_size, screen, False), king(3*square_size, 0, screen, True), king(3*square_size, 7*square_size, screen, False)]
+pieces = [pawn(0, square_size, screen, True), rook(0, 7*square_size, screen, False), rook(7*square_size, 0, screen, True), rook(0, 0, screen, True), rook(7*square_size, 7*square_size, screen, False), knight(1*square_size, 0, screen, True), knight(6*square_size, 0, screen, True), knight(1*square_size, 7*square_size, screen, False),knight(6*square_size, 7*square_size, screen, False) , bishop(2*square_size, 0, screen, True), bishop(5*square_size, 0, screen, True), bishop(2*square_size,7*square_size, screen, False), bishop(5*square_size, 7*square_size, screen, False), queen(4*square_size, 0, screen, True), queen(4*square_size, 7*square_size, screen, False), king(3*square_size, 0, screen, True), king(3*square_size, 7*square_size, screen, False)]
 
 def drawBoard():
     screen.fill(WHITE)
