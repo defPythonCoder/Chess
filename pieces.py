@@ -131,7 +131,7 @@ class knight(base):
         return True
     
     def rules(self, x, y, pieces_list):
-        if ((abs(self.dragx-x)<=2*square_size and abs(self.dragy-y)<=2*square_size and (abs(self.dragx-x)+abs(self.dragy-y))==3*square_size) and not((x==self.dragx) and (y==self.dragy))):
+        if ((abs(self.rect.x-x)<=2*square_size and abs(self.rect.y-y)<=2*square_size and (abs(self.rect.x-x)+abs(self.rect.y-y))==3*square_size) and not((x==self.rect.x) and (y==self.rect.y))):
             for i in pieces_list:
                 if i != None:
                     if (i.rect.x == x) and (i.rect.y == y):
@@ -162,3 +162,31 @@ class queen(base):
                             return False 
             return True
         return False
+
+class king(base):
+    def image(self):
+        if self.white:
+            self.img = pygame.transform.scale(pygame.image.load("images/w-king.png"), (square_size, square_size))
+        else:
+            self.img = pygame.transform.scale(pygame.image.load("images/b-king.png"), (square_size, square_size))
+            self.white = False
+
+    def restrict(self, x, y, pieces_list):
+        for piece in pieces_list:
+            if piece != None:
+                if piece.white != self.white:
+                    if piece.rules(x,y,pieces_list) and piece.restrict(x,y,pieces_list):
+                        print("False for ", piece)
+                        return False
+        return True
+    
+    def rules(self, x, y, pieces_list):
+        if abs(self.rect.x - x) <= square_size and abs(self.rect.y - y) <= square_size:
+            for i in pieces_list:
+                if i != None:
+                    if (i.rect.x == x) and (i.rect.y == y):
+                        if i.white == self.white:
+                            return False 
+            return True
+        return False
+    
