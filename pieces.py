@@ -185,13 +185,14 @@ class king(base):
                     if piece.rules(x,y,pieces_list) and piece.restrict(x,y,pieces_list):
                         print("False for ", piece)
                         return False
-            if x == piece.rect.x and y == piece.rect.y:
-                withoutPiece = pieces_list[:index] + pieces_list[index+1:]
-                for other_piece in withoutPiece:
-                    if other_piece is not None and other_piece.white != self.white:
-                        if other_piece.rules(x, y, withoutPiece) and other_piece.restrict(x, y, withoutPiece):
-                            print("False for", other_piece)
-                            return False
+            if piece != None:
+                if x == piece.rect.x and y == piece.rect.y:
+                    withoutPiece = pieces_list[:index] + pieces_list[index+1:]
+                    for other_piece in withoutPiece:
+                        if other_piece is not None and other_piece.white != self.white:
+                            if other_piece.rules(x, y, withoutPiece) and other_piece.restrict(x, y, withoutPiece):
+                                print("False for", other_piece)
+                                return False
         return True
     
     def rules(self, x, y, pieces_list):
