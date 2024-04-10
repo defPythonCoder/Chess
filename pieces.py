@@ -150,7 +150,7 @@ class queen(base):
 
     def restrict(self, x, y, pieces_list):
         rookrestrict, bishoprestrict = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
-        return rookrestrict.restrict(x, y, pieces_list) and bishoprestrict.restrict(x, y, pieces_list)
+        return rookrestrict.restrict(x, y, pieces_list) or bishoprestrict.restrict(x, y, pieces_list)
 
     def rules(self,x,y, pieces_list):
         rookRules, bishoprules = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
@@ -219,26 +219,29 @@ class pawn(base):
         self.firstMove = True
 
     def restrict(self, x, y, pieces_list):
+        piece_exists = False
+        for piece in pieces_list:
+            if piece != None:
+                if (piece.rect.x == x) and (piece.rect.y == y):
+                    if (self.white == piece.white):
+                        return False
+                    elif piece.rect.x == self.rect.x:
+                        return False
+                if not (x == self.rect.x):
+                    if (piece.rect.y == y) and (piece.rect.x == x):
+                        piece_exists = True
+        if not piece_exists and (not (self.rect.x == x)):
+            return False
         return True
 
     def rules(self, x, y, pieces_list):
-        if self.up:
-            if self.rect.y > y:
-                if self.firstMove:
-                    if abs(self.rect.y - y) <= square_size*2:
-                        self.firstMove = False
-                        return True
-                else:
-                    if abs(self.rect.y - y) <= square_size:
-                        self.firstMove = False
-                        return True
-        else:
-            if self.rect.y < y:
-                if self.firstMove:
-                    if abs(self.rect.y - y) <= square_size*2:
-                        self.firstMove = False
-                        return True
-                else:
-                    if abs(self.rect.y - y) <= square_size:
-                        self.firstMove = False
-                        return True
+        if self.up and y > self.rect.y:
+                return False
+        if (not self.up) and (y < self.rect.y):
+            return False
+        if not self.firstMove and abs(self.rect. y - y) > square_size:
+            return False
+        if abs(self.rect.x - x) > square_size:
+            return False
+        self.firstMove = False
+        return True
