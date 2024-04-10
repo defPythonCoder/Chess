@@ -71,6 +71,17 @@ while running:
                             pieces[x] = None
                             pieces[i].turn = False
 
+    for index in range(len(pieces)):
+        if pieces[index] != None:
+            try:
+                piece_name = (str(pieces[index]).strip('<').split()[0].split('.')[1])
+            except IndexError:
+                piece_name = None
+            if piece_name == 'pawn':
+                if (pieces[index].rect.y == square_size*7) or (pieces[index].rect.y == 0):
+                    temp = pieces[index]
+                    pieces[index] = queen(temp.rect.x, temp.rect.y, screen, temp.white)
+
     for i in pieces:
         if i != None:
             i.turn = False

@@ -217,6 +217,7 @@ class pawn(base):
         else:
             self.up = False
         self.firstMove = True
+        self.queen = False
 
     def restrict(self, x, y, pieces_list):
         piece_exists = False
