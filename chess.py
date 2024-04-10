@@ -53,6 +53,7 @@ def drawBoard():
             for j in range(1,5):
                 pygame.draw.rect(screen, BLACK, (j*2*square_size - square_size,i*square_size,square_size, square_size))
 
+white_turn = True
 running=True
 while running:
     for event in pygame.event.get():
@@ -62,9 +63,10 @@ while running:
     for i in range(len(pieces)):
         if None != pieces[i]:
             pieces[i].highlight()
-            pieces[i].click(pieces)
+            pieces[i].click(pieces, white_turn)
             pieces[i].draw()
             if pieces[i].turn:
+                white_turn = not white_turn
                 for x in range(len(pieces)):
                     if (i != x) and pieces[x] != None:
                         if (pieces[i].rect.y == pieces[x].rect.y) and (pieces[i].rect.x == pieces[x].rect.x):
@@ -82,9 +84,15 @@ while running:
                     temp = pieces[index]
                     pieces[index] = queen(temp.rect.x, temp.rect.y, screen, temp.white)
 
-    for i in pieces:
-        if i != None:
-            i.turn = False
+    for i in range(len(pieces)):
+        try:
+            if pieces[i] != None:
+                pieces[i].turn = False
+            if pieces[i] == False:
+                del pieces[i]
+        except IndexError:
+            continue
+
 
     pygame.display.update()
 pygame.quit()

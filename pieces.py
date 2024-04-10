@@ -31,7 +31,7 @@ class base():
     def draw(self):
         self.win.blit(self.img, self.rect)
 
-    def click(self, pieces_list):
+    def click(self, pieces_list, turn):
         if pygame.mouse.get_pressed()[0] and pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()) and not self.selected and not self.move:
             self.selected = True
             self.dragx, self.dragy = self.rect.x, self.rect.y
@@ -40,9 +40,10 @@ class base():
             if pygame.mouse.get_pressed()[0] and not (pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos())):
                 mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 if self.rules(mousex, mousey, pieces_list) and self.restrict(mousex, mousey, pieces_list):
-                    self.rect.x, self.rect.y = mousex, mousey
-                    self.move = True
-                    self.turn = True
+                    if turn == self.white:
+                        self.rect.x, self.rect.y = mousex, mousey
+                        self.move = True
+                        self.turn = True
 
         if self.move and self.selected:
             if not pygame.mouse.get_pressed()[0]:# and not pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()):
@@ -150,7 +151,11 @@ class queen(base):
 
     def restrict(self, x, y, pieces_list):
         rookrestrict, bishoprestrict = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
-        return rookrestrict.restrict(x, y, pieces_list) or bishoprestrict.restrict(x, y, pieces_list)
+        if bishoprestrict.restrict(x, y, pieces_list):
+            print("pass Bishop")
+        if rookrestrict.restrict(x, y, pieces_list):
+            print("pass rook")
+        return bishoprestrict.restrict(x, y, pieces_list) and rookrestrict.restrict(x, y, pieces_list)
 
     def rules(self,x,y, pieces_list):
         rookRules, bishoprules = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
@@ -231,6 +236,12 @@ class pawn(base):
                 if not (x == self.rect.x):
                     if (piece.rect.y == y) and (piece.rect.x == x):
                         piece_exists = True
+                if self.up and (x == self.rect.x):
+                    if (piece.rect.x == self.rect.x) and ((piece.rect.y - self.rect.y) == -square_size):
+                        return False
+                elif (not self.up) and (x == self.rect.x):
+                    if (piece.rect.x == self.rect.x) and ((piece.rect.y - self.rect.y) == square_size):
+                        return False
         if not piece_exists and (not (self.rect.x == x)):
             return False
         return True
@@ -240,9 +251,36 @@ class pawn(base):
                 return False
         if (not self.up) and (y < self.rect.y):
             return False
-        if not self.firstMove and abs(self.rect. y - y) > square_size:
+        if not self.firstMove and abs(self.rect.y - y) > square_size:
+            return False
+        if self.firstMove and abs(self.rect.y - y) > square_size*2:
             return False
         if abs(self.rect.x - x) > square_size:
             return False
-        self.firstMove = False
+        if self.rect.y == y:
+            return False
         return True
+    
+    def click(self, pieces_list, turn):
+        if pygame.mouse.get_pressed()[0] and pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()) and not self.selected and not self.move:
+            self.selected = True
+            self.dragx, self.dragy = self.rect.x, self.rect.y
+
+        if self.selected and not self.move:
+            if pygame.mouse.get_pressed()[0] and not (pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos())):
+                mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                if self.rules(mousex, mousey, pieces_list) and self.restrict(mousex, mousey, pieces_list):
+                    if turn == self.white:
+                        self.rect.x, self.rect.y = mousex, mousey
+                        self.move = True
+                        self.turn = True
+
+        if self.move and self.selected:
+            if not pygame.mouse.get_pressed()[0]:# and not pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()):
+                self.move = False
+                self.selected = False
+                self.firstMove = False
+
+        if pygame.mouse.get_pressed()[0]:
+            if self.selected and not self.move and not (pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos())):
+                self.selected = False
