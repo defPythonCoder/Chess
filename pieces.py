@@ -151,11 +151,10 @@ class queen(base):
 
     def restrict(self, x, y, pieces_list):
         rookrestrict, bishoprestrict = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
-        if bishoprestrict.restrict(x, y, pieces_list):
-            print("pass Bishop")
-        if rookrestrict.restrict(x, y, pieces_list):
-            print("pass rook")
-        return bishoprestrict.restrict(x, y, pieces_list) and rookrestrict.restrict(x, y, pieces_list)
+        if (self.rect.x == x) or (self.rect.y == y):
+            return rookrestrict.restrict(x, y, pieces_list)
+        else:
+            return bishoprestrict.restrict(x, y, pieces_list)
 
     def rules(self,x,y, pieces_list):
         rookRules, bishoprules = rook(self.rect.x, self.rect.y, self.win, self.white), bishop(self.rect.x, self.rect.y, self.win, self.white)
