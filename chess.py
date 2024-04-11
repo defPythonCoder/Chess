@@ -59,19 +59,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running=False
-    drawBoard()
-    for i in range(len(pieces)):
-        if None != pieces[i]:
-            pieces[i].highlight()
-            pieces[i].click(pieces, white_turn)
-            pieces[i].draw()
-            if pieces[i].turn:
-                white_turn = not white_turn
-                for x in range(len(pieces)):
-                    if (i != x) and pieces[x] != None:
-                        if (pieces[i].rect.y == pieces[x].rect.y) and (pieces[i].rect.x == pieces[x].rect.x):
-                            pieces[x] = None
-                            pieces[i].turn = False
 
     for index in range(len(pieces)):
         if pieces[index] != None:
@@ -83,12 +70,32 @@ while running:
                 if (pieces[index].rect.y == square_size*7) or (pieces[index].rect.y == 0):
                     temp = pieces[index]
                     pieces[index] = queen(temp.rect.x, temp.rect.y, screen, temp.white)
+            if piece_name == 'king':
+                if pieces[index].check(pieces):
+                    pieces[index].attack = True
+
+    drawBoard()
+    for i in range(len(pieces)):
+        if None != pieces[i]:
+            pieces[i].highlight()
+            pieces[i].click(pieces, white_turn)
+            if pieces[i].turn:
+                white_turn = not white_turn
+                for x in range(len(pieces)):
+                    if (i != x) and pieces[x] != None:
+                        if (pieces[i].rect.y == pieces[x].rect.y) and (pieces[i].rect.x == pieces[x].rect.x):
+                            pieces[x] = None
+                            pieces[i].turn = False
+            pieces[i].draw()
 
     for i in range(len(pieces)):
         try:
             if pieces[i] != None:
                 pieces[i].turn = False
-            if pieces[i] == False:
+                piece_name = (str(pieces[i]).strip('<').split()[0].split('.')[1])
+                if piece_name == 'king':
+                    pieces[i].attack = False
+            if pieces[i] == None:
                 del pieces[i]
         except IndexError:
             continue

@@ -35,7 +35,6 @@ class base():
         if pygame.mouse.get_pressed()[0] and pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()) and not self.selected and not self.move:
             self.selected = True
             self.dragx, self.dragy = self.rect.x, self.rect.y
-
         if self.selected and not self.move:
             if pygame.mouse.get_pressed()[0] and not (pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos())):
                 mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
@@ -174,6 +173,14 @@ class king(base):
         else:
             self.img = pygame.transform.scale(pygame.image.load("images/b-king.png"), (square_size, square_size))
             self.white = False
+        self.attack = False
+
+    def highlight(self): 
+        if self.attack:
+            pygame.draw.rect(self.win, (255, 0, 0), (self.dragx, self.dragy, square_size, square_size))
+        if self.selected:
+            pygame.draw.rect(self.win, (0, 255, 0), (self.dragx, self.dragy, square_size, square_size))
+
 
     def restrict(self, x, y, pieces_list):
         for index, piece in enumerate(pieces_list):
@@ -187,7 +194,6 @@ class king(base):
                         if piece.rules(x,y,pieces_list):
                             return False
                     if piece.rules(x,y,pieces_list) and piece.restrict(x,y,pieces_list):
-                        print("False for ", piece)
                         return False
             if piece != None:
                 if x == piece.rect.x and y == piece.rect.y:
@@ -208,6 +214,19 @@ class king(base):
                             return False 
             return True
         return False
+    
+    def check(self, pieces_list):
+        for piece in pieces_list:
+            try:
+                piece_name = (str(piece).strip('<').split()[0].split('.')[1])
+            except IndexError:
+                piece_name = None
+            if piece_name != None or piece != None:
+                if piece_name != 'king' and self.white != piece.white:
+                    if piece.rules(self.rect.x, self.rect.y, pieces_list) and piece.restrict(self.rect.x, self.rect.y, pieces_list):
+                        return True
+        return False
+
     
 class pawn(base):
     def image(self):
