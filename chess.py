@@ -43,6 +43,8 @@ pieces = [pawn(0, 1*square_size, screen, True),
           king(3*square_size, 0, screen, True),
           king(3*square_size, 7*square_size, screen, False)]
 
+temp_pieces = None
+
 def drawBoard():
     screen.fill(WHITE)
     for i in range(8):
@@ -54,6 +56,7 @@ def drawBoard():
                 pygame.draw.rect(screen, BLACK, (j*2*square_size - square_size,i*square_size,square_size, square_size))
 
 white_turn = True
+checked = [False, None, None]
 running=True
 while running:
     for event in pygame.event.get():
@@ -71,14 +74,16 @@ while running:
                     temp = pieces[index]
                     pieces[index] = queen(temp.rect.x, temp.rect.y, screen, temp.white)
             if piece_name == 'king':
-                if pieces[index].check(pieces):
+                if pieces[index].check_square(pieces)[0]:
                     pieces[index].attack = True
+                    checked = [True, pieces[index].white, pieces[index].check_square(pieces)[1]]
 
     drawBoard()
+    temp_pieces = pieces
     for i in range(len(pieces)):
         if None != pieces[i]:
             pieces[i].highlight()
-            pieces[i].click(pieces, white_turn)
+            pieces[i].click(pieces, white_turn, checked)
             if pieces[i].turn:
                 white_turn = not white_turn
                 for x in range(len(pieces)):
@@ -99,7 +104,7 @@ while running:
                 del pieces[i]
         except IndexError:
             continue
-
+    checked = [False, None, None]
 
     pygame.display.update()
 pygame.quit()

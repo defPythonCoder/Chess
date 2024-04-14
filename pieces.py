@@ -31,7 +31,18 @@ class base():
     def draw(self):
         self.win.blit(self.img, self.rect)
 
-    def click(self, pieces_list, turn):
+    def check(self, checked, x, y):
+        if not checked[0]:
+            return True
+        if checked[0] and (self.white == checked[1]):
+            attack_squares = checked[2]
+            if [x,y] in checked[2]:
+                return True
+        else:
+            return False
+
+
+    def click(self, pieces_list, turn, checked):
         if pygame.mouse.get_pressed()[0] and pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()) and not self.selected and not self.move:
             self.selected = True
             self.dragx, self.dragy = self.rect.x, self.rect.y
@@ -40,9 +51,10 @@ class base():
                 mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 if self.rules(mousex, mousey, pieces_list) and self.restrict(mousex, mousey, pieces_list):
                     if turn == self.white:
-                        self.rect.x, self.rect.y = mousex, mousey
-                        self.move = True
-                        self.turn = True
+                        if self.check(checked, mousex, mousey):
+                            self.rect.x, self.rect.y = mousex, mousey
+                            self.move = True
+                            self.turn = True
 
         if self.move and self.selected:
             if not pygame.mouse.get_pressed()[0]:# and not pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()):
@@ -106,7 +118,7 @@ class bishop(base):
                 if piece != None:
                     if (piece.rect.y == (self.rect.y + (i*ydiff))) and (piece.rect.x == (self.rect.x + (i*xdiff))):
                         return False
-        return True
+        return True   
 
 
     def rules(self,x,y, pieces_list):
@@ -215,7 +227,7 @@ class king(base):
             return True
         return False
     
-    def check(self, pieces_list):
+    def check_square(self, pieces_list):
         for piece in pieces_list:
             try:
                 piece_name = (str(piece).strip('<').split()[0].split('.')[1])
@@ -224,9 +236,11 @@ class king(base):
             if piece_name != None or piece != None:
                 if piece_name != 'king' and self.white != piece.white:
                     if piece.rules(self.rect.x, self.rect.y, pieces_list) and piece.restrict(self.rect.x, self.rect.y, pieces_list):
-                        return True
-        return False
+                        return [True, get_squares(self.rect.x, self.rect.y, piece.rect.x, piece.rect.y)]
+        return [False, None]
 
+    def check(self, checked, x, y):
+        return True
     
 class pawn(base):
     def image(self):
@@ -279,7 +293,7 @@ class pawn(base):
             return False
         return True
     
-    def click(self, pieces_list, turn):
+    def click(self, pieces_list, turn, checked):
         if pygame.mouse.get_pressed()[0] and pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()) and not self.selected and not self.move:
             self.selected = True
             self.dragx, self.dragy = self.rect.x, self.rect.y
@@ -289,9 +303,10 @@ class pawn(base):
                 mousex, mousey = get_coords(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 if self.rules(mousex, mousey, pieces_list) and self.restrict(mousex, mousey, pieces_list):
                     if turn == self.white:
-                        self.rect.x, self.rect.y = mousex, mousey
-                        self.move = True
-                        self.turn = True
+                        if self.check(checked, mousex, mousey):
+                            self.rect.x, self.rect.y = mousex, mousey
+                            self.move = True
+                            self.turn = True
 
         if self.move and self.selected:
             if not pygame.mouse.get_pressed()[0]:# and not pygame.Rect.collidepoint(self.rect, pygame.mouse.get_pos()):
