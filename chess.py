@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 
 #imports
-from newpices import *
+from pieces import *
 import colors
 
 #Constants
